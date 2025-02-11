@@ -1,0 +1,40 @@
+#include <Adafruit_NeoPixel.h>
+
+#define LED_PIN D2       // Pin connected to NeoPixel strip
+#define NUM_LEDS 52     // Total number of LEDs in your display
+
+Adafruit_NeoPixel strip(NUM_LEDS, LED_PIN, NEO_GRB + NEO_KHZ800);
+
+void setup() {
+  Serial.begin(115200);
+  strip.begin();
+  strip.show();  // Initialize all LEDs off
+
+  Serial.println("Starting LED Segment Mapping Test...");
+  Serial.println("Each LED will light up one by one.");
+  Serial.println("Use this to map LED indices to display segments.");
+  Serial.println("Press any key in Serial Monitor to restart test.");
+}
+
+void loop() {
+  for (int i = 0; i < NUM_LEDS; i++) {
+    strip.clear();  // Turn off all LEDs
+    strip.setPixelColor(i, strip.Color(255, 0, 0)); // Light up current LED in red
+    strip.show();
+    
+    Serial.print("LED Index: ");
+    Serial.println(i);
+
+    delay(000); // Keep LED on for 1 second per step
+
+    if (Serial.available() > 0) {  // If user sends input, restart
+      Serial.read(); // Clear input buffer
+      Serial.println("Restarting LED test...");
+      i = -1; // Reset loop
+      delay(500);
+    }
+  }
+
+  Serial.println("LED mapping test complete! Restarting...");
+  delay(2000); // Restart the cycle
+}
